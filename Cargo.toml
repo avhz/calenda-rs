@@ -1,0 +1,28 @@
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## calenda-rs: A Rust library for global calendars.
+## Copyright (C) 2024 https://github.com/avhz
+##
+## Dual licensed under Apache 2.0 and MIT.
+##
+## See:
+##      - LICENSE-APACHE.md
+##      - LICENSE-MIT.md
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[package]
+name = "calenda-rs"
+version = "0.1.0"
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/avhz/RustQuant"
+description = "A Rust library for global calendars."
+keywords = ["dates", "holidays", "business-days", "calendars"]
+categories = ["date-and-time", "development-tools", "finance", "science"]
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at:
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.33" # docs.rs/chrono
+time = "0.3.34"   # docs.rs/time
