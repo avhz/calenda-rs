@@ -30,6 +30,40 @@ pub trait Calendar {
         !is_weekend(date) && !self.is_holiday(date)
     }
 
+    /// Function to list all holidays for a given range of `Date`s.
+    fn all_holidays_between(&self, start_date: Date, end_date: Date) -> Vec<Date> {
+        let mut holidays = Vec::new();
+
+        let mut temp_date = start_date;
+
+        while temp_date <= end_date {
+            if self.is_holiday(temp_date) {
+                holidays.push(temp_date);
+            }
+
+            temp_date = temp_date.next_day().unwrap();
+        }
+
+        holidays
+    }
+
+    /// Function to list all business days for a given range of `Date`s.
+    fn all_business_days_between(&self, start_date: Date, end_date: Date) -> Vec<Date> {
+        let mut business_days = Vec::new();
+
+        let mut temp_date = start_date;
+
+        while temp_date <= end_date {
+            if self.is_business_day(temp_date) {
+                business_days.push(temp_date);
+            }
+
+            temp_date = temp_date.next_day().unwrap();
+        }
+
+        business_days
+    }
+
     // /// List of all holidays for the given calendar and year.
     // fn holidays(&self, year: i32) -> BTreeMap<Date, Holiday> {
     //     todo!("Implement holidays")
@@ -49,4 +83,29 @@ pub trait Calendar {
 
     // /// Returns the ISO 3166-1 country code.
     // fn country_code(&self) -> crate::iso::ISO_3166;
+}
+
+#[cfg(test)]
+mod tests_calendar {
+    use super::*;
+    use crate::countries::oceania::australia::AustraliaCalendar;
+    use time::macros::date;
+
+    #[test]
+    fn test_is_business_day() {
+        let calendar = AustraliaCalendar;
+
+        assert_eq!(calendar.is_business_day(date!(2024 - 1 - 1)), false);
+        assert_eq!(calendar.is_business_day(date!(2024 - 1 - 2)), true);
+    }
+
+    #[test]
+    fn test_all_holidays_between() {
+        let calendar = AustraliaCalendar;
+
+        let holidays = calendar.all_holidays_between(date!(2024 - 1 - 1), date!(2025 - 12 - 31));
+
+        println!("{:?}", holidays);
+        assert_eq!(holidays.len(), 13);
+    }
 }

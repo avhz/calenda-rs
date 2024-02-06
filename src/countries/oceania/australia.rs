@@ -16,9 +16,9 @@ use crate::functions::unpack_date;
 use time::{Date, Month, Weekday};
 
 /// Australian national holiday calendar.
-pub struct AustralianCalendar;
+pub struct AustraliaCalendar;
 
-impl Calendar for AustralianCalendar {
+impl Calendar for AustraliaCalendar {
     fn name(&self) -> &'static str {
         "Australia"
     }

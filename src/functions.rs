@@ -52,15 +52,15 @@ pub(crate) fn is_weekend(date: Date) -> bool {
 }
 
 /// Check if the date is a weekday.
-fn is_weekday(date: Date) -> bool {
+pub(crate) fn is_weekday(date: Date) -> bool {
     !is_weekend(date)
 }
 
-fn get_first_day_of_month(year: i32, month: Month) -> Result<Weekday, Error> {
+pub(crate) fn get_first_day_of_month(year: i32, month: Month) -> Result<Weekday, Error> {
     Ok(Date::from_calendar_date(year, month, 1)?.weekday())
 }
 
-fn get_last_day_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_day_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let date = Date::from_calendar_date(year, month, 1)?;
 
     let last_day = date + Duration::days(days_in_year_month(year, month) as i64);
@@ -68,7 +68,7 @@ fn get_last_day_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(last_day)
 }
 
-fn get_first_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -80,7 +80,7 @@ fn get_first_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -92,7 +92,7 @@ fn get_first_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -104,7 +104,7 @@ fn get_first_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> 
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -116,7 +116,7 @@ fn get_first_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -128,7 +128,7 @@ fn get_first_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -140,7 +140,7 @@ fn get_first_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_first_sunday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_first_sunday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let mut first_day = get_first_day_of_month(year, month)?;
     let mut day = 1;
 
@@ -152,7 +152,7 @@ fn get_first_sunday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -165,7 +165,7 @@ fn get_last_monday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -178,7 +178,7 @@ fn get_last_tuesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -191,7 +191,7 @@ fn get_last_wednesday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -204,7 +204,7 @@ fn get_last_thursday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -217,7 +217,7 @@ fn get_last_friday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
@@ -230,7 +230,7 @@ fn get_last_saturday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     Ok(Date::from_calendar_date(year, month, day)?)
 }
 
-fn get_last_sunday_of_month(year: i32, month: Month) -> Result<Date, Error> {
+pub(crate) fn get_last_sunday_of_month(year: i32, month: Month) -> Result<Date, Error> {
     let last_day = get_last_day_of_month(year, month)?;
     let mut day = last_day.day();
     let mut last_day = last_day;
