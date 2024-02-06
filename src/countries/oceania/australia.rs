@@ -12,11 +12,10 @@
 //! This module defines Australian holidays and calendars.
 
 use crate::calendar::Calendar;
-use crate::functions::{is_weekend, unpack_date};
-use crate::holiday::Holiday;
-use std::collections::BTreeMap;
+use crate::functions::unpack_date;
 use time::{Date, Month, Weekday};
 
+/// Australian national holiday calendar.
 pub struct AustralianCalendar;
 
 impl Calendar for AustralianCalendar {
@@ -24,23 +23,19 @@ impl Calendar for AustralianCalendar {
         "Australia"
     }
 
-    fn holidays(&self, year: i32) -> BTreeMap<Date, Holiday> {
-        todo!("Implement Australian holidays")
-    }
-
     fn is_holiday(&self, date: Date) -> bool {
         let (y, m, d, wd, yd, em) = unpack_date(date, false);
 
-        if is_weekend(date)
-            // New Year's Day (possibly moved to Monday)
-            || ((d == 1 || ((d == 2 || d == 3) && wd == Weekday::Monday)) && m == Month::January)
+        if
+        // New Year's Day (possibly moved to Monday)
+        ((d == 1 || ((d == 2 || d == 3) && wd == Weekday::Monday)) && m == Month::January)
             // Australia Day, January 26th (possibly moved to Monday)
             || ((d == 26 || ((d == 27 || d == 28) && wd == Weekday::Monday)) && m == Month::January)
             // Good Friday
             || (yd == em - 3)
             // Easter Monday
             || (yd == em)
-            // ANZAC Day, April 25th
+            // ANZAC Day
             || (d == 25 && m == Month::April)
             // Queen's Birthday, second Monday in June
             || ((d > 7 && d <= 14) && wd == Weekday::Monday && m == Month::June)
@@ -55,9 +50,9 @@ impl Calendar for AustralianCalendar {
             // National Day of Mourning for Her Majesty, September 22 (only 2022)
             || (d == 22 && m == Month::September && y == 2022)
         {
-            return false;
+            return true;
         }
 
-        true
+        false
     }
 }

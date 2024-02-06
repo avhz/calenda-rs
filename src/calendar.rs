@@ -11,30 +11,29 @@
 
 //! This module defines a `Calendar` type and its methods.
 
-use crate::{functions::is_weekend, holiday::Holiday};
-use std::collections::BTreeMap;
+use crate::functions::is_weekend;
 use time::Date;
 
 /// Calendar trait.
 pub trait Calendar {
-    /// Name of the calendar.
+    /// Name of the calendar, typically the country name, but could also be
+    /// a region/subdivision or a special calendar, such as a financial calendar (e.g. NYSE).
     fn name(&self) -> &'static str;
 
+    /// Check if the date is a holiday (but not a weekend).
+    /// This is the primary method to implement for a calendar.
+    fn is_holiday(&self, date: Date) -> bool;
+
     /// Check if the date is a business day.
+    /// A business day is a day that is not a holiday and not a weekend.
     fn is_business_day(&self, date: Date) -> bool {
-        let is_weekend = is_weekend(date);
-        let is_holiday = self.is_holiday(date);
-
-        !is_weekend && !is_holiday
+        !is_weekend(date) && !self.is_holiday(date)
     }
 
-    /// Check if the date is a holiday.
-    fn is_holiday(&self, date: Date) -> bool {
-        !is_weekend(date) && self.is_business_day(date)
-    }
-
-    /// List of all holidays for the given calendar and year.
-    fn holidays(&self, year: i32) -> BTreeMap<Date, Holiday>;
+    // /// List of all holidays for the given calendar and year.
+    // fn holidays(&self, year: i32) -> BTreeMap<Date, Holiday> {
+    //     todo!("Implement holidays")
+    // }
     //     let mut holidays = BTreeMap::new();
 
     //     for day in 1..=days_in_year(year) {

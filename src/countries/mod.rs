@@ -11,16 +11,22 @@
 
 //! This module defines calendars and holidays for different countries.
 
+/// Calendars implemented for African countries.
 pub mod africa;
 
+/// Calendars implemented for Asian countries.
 pub mod asia;
 
+/// Calendars implemented for European countries.
 pub mod europe;
 
+/// Calendars implemented for North American countries.
 pub mod north_america;
 
+/// Calendars implemented for Oceanian countries.
 pub mod oceania {
     pub mod australia;
 }
 
+/// Calendars implemented for South American countries.
 pub mod south_america;

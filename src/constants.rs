@@ -11,8 +11,11 @@
 
 //! This module defines calendar and holiday related constants.
 
-pub(crate) const MIN_YEAR: i32 = 1000;
-pub(crate) const MAX_YEAR: i32 = 3000;
+pub(crate) const MIN_YEAR: i32 = 1901;
+pub(crate) const MAX_YEAR: i32 = 2199;
+
+pub(crate) const WEEKEND_MASK: &[bool] = &[false, false, false, false, false, true, true];
+pub(crate) const WEEKDAY_MASK: &[bool] = &[true, true, true, true, true, false, false];
 
 pub(crate) const DAYS_IN_YEAR: usize = 365; // Or should it be 365.25?
 pub(crate) const DAYS_IN_WEEK: usize = 7;
