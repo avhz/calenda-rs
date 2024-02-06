@@ -18,22 +18,31 @@ pub mod africa {
 }
 
 /// Calendars implemented for Asian countries.
-pub mod asia;
+pub mod asia {
+    /// This module defines China holidays and calendars.
+    pub mod china;
+}
 
 /// Calendars implemented for European countries.
 pub mod europe {
     /// This module defines Austria holidays and calendars.
     pub mod austria;
+    /// This module defines Czech Republic holidays and calendars.
+    pub mod czech_republic;
 }
 
 /// Calendars implemented for North American countries.
-pub mod north_america;
+pub mod north_america {
+    /// This module defines Canada holidays and calendars.
+    pub mod canada;
+    /// This module defines United States holidays and calendars.
+    pub mod united_states;
+}
 
 /// Calendars implemented for Oceanian countries.
 pub mod oceania {
     /// This module defines Australia holidays and calendars.
     pub mod australia;
-
     /// This module defines New Zealand holidays and calendars.
     pub mod new_zealand;
 }
@@ -42,7 +51,8 @@ pub mod oceania {
 pub mod south_america {
     /// This module defines Argentina holidays and calendars.
     pub mod argentina;
-
     /// This module defines Brazil holidays and calendars.
     pub mod brazil;
+    /// This module defines Chile holidays and calendars.
+    pub mod chile;
 }
