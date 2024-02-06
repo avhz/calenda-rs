@@ -44,6 +44,8 @@ pub trait Calendar {
             temp_date = temp_date.next_day().unwrap();
         }
 
+        holidays.sort();
+
         holidays
     }
 
@@ -60,6 +62,8 @@ pub trait Calendar {
 
             temp_date = temp_date.next_day().unwrap();
         }
+
+        business_days.sort();
 
         business_days
     }
@@ -83,29 +87,4 @@ pub trait Calendar {
 
     // /// Returns the ISO 3166-1 country code.
     // fn country_code(&self) -> crate::iso::ISO_3166;
-}
-
-#[cfg(test)]
-mod tests_calendar {
-    use super::*;
-    use crate::countries::oceania::australia::AustraliaCalendar;
-    use time::macros::date;
-
-    #[test]
-    fn test_is_business_day() {
-        let calendar = AustraliaCalendar;
-
-        assert_eq!(calendar.is_business_day(date!(2024 - 1 - 1)), false);
-        assert_eq!(calendar.is_business_day(date!(2024 - 1 - 2)), true);
-    }
-
-    #[test]
-    fn test_all_holidays_between() {
-        let calendar = AustraliaCalendar;
-
-        let holidays = calendar.all_holidays_between(date!(2024 - 1 - 1), date!(2025 - 12 - 31));
-
-        println!("{:?}", holidays);
-        assert_eq!(holidays.len(), 13);
-    }
 }

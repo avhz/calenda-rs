@@ -21,6 +21,8 @@ pub mod africa {
 pub mod asia {
     /// This module defines China holidays and calendars.
     pub mod china;
+    /// This module defines Hong Kong holidays and calendars.
+    pub mod hong_kong;
 }
 
 /// Calendars implemented for European countries.
@@ -29,6 +31,14 @@ pub mod europe {
     pub mod austria;
     /// This module defines Czech Republic holidays and calendars.
     pub mod czech_republic;
+    /// This module defines Denmark holidays and calendars.
+    pub mod denmark;
+    /// This module defines Finland holidays and calendars.
+    pub mod finland;
+    /// This module defines France holidays and calendars.
+    pub mod france;
+    /// This module defines Germany holidays and calendars.
+    pub mod germany;
 }
 
 /// Calendars implemented for North American countries.
