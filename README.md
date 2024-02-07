@@ -14,7 +14,7 @@ A Rust library for global calendars.
 - [ ] Algeria
 - [ ] Angola
 - [ ] Benin
-- [ ] Botswana
+- [x] Botswana
 - [ ] Burkina
 - [ ] Burundi
 - [ ] Cameroon
@@ -75,10 +75,11 @@ A Rust library for global calendars.
 - [ ] Brunei
 - [ ] Burma (Myanmar)
 - [ ] Cambodia
-- [ ] China
+- [x] China
 - [ ] East Timor
-- [ ] India
-- [ ] Indonesia
+- [x] Hong Kong
+- [x] India
+- [x] Indonesia
 - [ ] Iran
 - [ ] Iraq
 - [ ] Israel
@@ -118,7 +119,7 @@ A Rust library for global calendars.
 - [ ] Albania
 - [ ] Andorra
 - [ ] Armenia
-- [ ] Austria
+- [x] Austria
 - [ ] Azerbaijan
 - [ ] Belarus
 - [ ] Belgium
@@ -126,16 +127,16 @@ A Rust library for global calendars.
 - [ ] Bulgaria
 - [ ] Croatia
 - [ ] Cyprus
-- [ ] Czech Republic
-- [ ] Denmark
+- [x] Czech Republic
+- [x] Denmark
 - [ ] Estonia
-- [ ] Finland
-- [ ] France
+- [x] Finland
+- [x] France
 - [ ] Georgia
-- [ ] Germany
+- [x] Germany
 - [ ] Greece
-- [ ] Hungary
-- [ ] Iceland
+- [x] Hungary
+- [x] Iceland
 - [ ] Ireland
 - [ ] Italy
 - [ ] Latvia
@@ -160,7 +161,7 @@ A Rust library for global calendars.
 - [ ] Sweden
 - [ ] Switzerland
 - [ ] Ukraine
-- [ ] United Kingdom
+- [x] United Kingdom
 - [ ] Vatican City
 
 ### North America
@@ -169,7 +170,7 @@ A Rust library for global calendars.
 - [ ] Bahamas
 - [ ] Barbados
 - [ ] Belize
-- [ ] Canada
+- [x] Canada
 - [ ] Costa Rica
 - [ ] Cuba
 - [ ] Dominica
@@ -187,14 +188,14 @@ A Rust library for global calendars.
 - [ ] Saint Lucia
 - [ ] Saint Vincent and the Grenadines
 - [ ] Trinidad and Tobago
-- [ ] United States
+- [x] United States
 
 ### South America
 
-- [ ] Argentina
+- [x] Argentina
 - [ ] Bolivia
-- [ ] Brazil
-- [ ] Chile
+- [x] Brazil
+- [x] Chile
 - [ ] Colombia
 - [ ] Ecuador
 - [ ] Guyana
@@ -206,13 +207,13 @@ A Rust library for global calendars.
 
 ### Oceania
 
-- [ ] Australia
+- [x] Australia
 - [ ] Fiji
 - [ ] Kiribati
 - [ ] Marshall Islands
 - [ ] Micronesia
 - [ ] Nauru
-- [ ] New Zealand
+- [x] New Zealand
 - [ ] Palau
 - [ ] Papua New Guinea
 - [ ] Samoa
