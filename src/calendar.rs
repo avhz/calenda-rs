@@ -67,24 +67,4 @@ pub trait Calendar {
 
         business_days
     }
-
-    // /// List of all holidays for the given calendar and year.
-    // fn holidays(&self, year: i32) -> BTreeMap<Date, Holiday> {
-    //     todo!("Implement holidays")
-    // }
-    //     let mut holidays = BTreeMap::new();
-
-    //     for day in 1..=days_in_year(year) {
-    //         let date = Date::from_ordinal_date(year, day);
-
-    //         if self.is_holiday(date.unwrap_or(false)) {
-    //             holidays.insert(date, Holiday::default());
-    //         }
-    //     }
-
-    //     holidays
-    // }
-
-    // /// Returns the ISO 3166-1 country code.
-    // fn country_code(&self) -> crate::iso::ISO_3166;
 }

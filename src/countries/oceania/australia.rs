@@ -56,3 +56,58 @@ impl Calendar for AustraliaCalendar {
         false
     }
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// UNIT TESTS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#[cfg(test)]
+mod test_australia {
+    use super::*;
+    use time::macros::date;
+
+    // Test to verify the name() method.
+    #[test]
+    fn test_name() {
+        let calendar = AustraliaCalendar;
+        assert_eq!(calendar.name(), "Australia");
+    }
+
+    // Test to verify if weekends are not considered business days.
+    #[test]
+    fn test_is_weekend() {
+        let calendar = AustraliaCalendar;
+        let sat = date!(2023 - 08 - 26);
+        let sun = date!(2023 - 08 - 27);
+        assert!(!calendar.is_business_day(sat));
+        assert!(!calendar.is_business_day(sun));
+    }
+
+    // Test to verify if the is_business_day() method properly accounts for public holidays.
+    #[test]
+    fn test_is_public_holiday() {
+        let calendar = AustraliaCalendar;
+        let new_years_day = date!(2023 - 01 - 01);
+        let australia_day = date!(2023 - 01 - 26);
+        let anzac_day = date!(2023 - 04 - 25);
+        let christmas = date!(2023 - 12 - 25);
+
+        assert!(!calendar.is_business_day(new_years_day));
+        assert!(!calendar.is_business_day(australia_day));
+        assert!(!calendar.is_business_day(anzac_day));
+        assert!(!calendar.is_business_day(christmas));
+    }
+
+    // Test to verify if the is_business_day() method properly accounts for regular business days.
+    #[test]
+    fn test_is_regular_business_day() {
+        let calendar = AustraliaCalendar;
+        let regular_day1 = date!(2023 - 03 - 01);
+        let regular_day2 = date!(2023 - 07 - 12);
+        let regular_day3 = date!(2023 - 11 - 17);
+
+        assert!(calendar.is_business_day(regular_day1));
+        assert!(calendar.is_business_day(regular_day2));
+        assert!(calendar.is_business_day(regular_day3));
+    }
+}
