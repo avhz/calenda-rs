@@ -17,8 +17,6 @@
         <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/avhz/RustQuant/build.yml">
     <a href="#deps" alt="deps">
         <img alt="Dependencies" src="https://deps.rs/repo/github/avhz/calenda-rs/status.svg">
-    <a href="#discord" alt="discord">
-        <img alt="Discord" src="https://img.shields.io/discord/1146771658082881636?logo=discord">
 </p>
 
 A Rust library for global calendars. This is a [RustQuant project](https://github.com/avhz/RustQuant).
