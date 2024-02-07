@@ -12,7 +12,10 @@
 //! This module defines general calendar and holiday related functions.
 
 use crate::constants::EASTER_MONDAYS;
-use time::{util::days_in_year_month, Date, Duration, Error, Month, Weekday};
+use time::{
+    util::{days_in_year, days_in_year_month, is_leap_year},
+    Date, Duration, Error, Month, Weekday,
+};
 
 /// Unpacks a `Date` into a tuple in the following form:
 ///
@@ -54,6 +57,68 @@ pub fn is_weekend(date: Date) -> bool {
 /// Check if the date is a weekday.
 pub fn is_weekday(date: Date) -> bool {
     !is_weekend(date)
+}
+
+/// Function to get a list of the years in a range of `Dates`.
+pub fn get_years_in_range(start: Date, end: Date) -> Vec<i32> {
+    (start.year()..=end.year()).collect()
+}
+
+/// Function to get the number of days for each year in a range of `Dates`.
+///
+/// ```
+/// use time::{Date, Month};
+/// use calenda_rs::functions::get_days_in_years_in_range;
+///
+/// let start = Date::from_calendar_date(2023, Month::July, 1).unwrap();
+/// let end = Date::from_calendar_date(2025, Month::January, 1).unwrap();
+///
+/// let days_in_years = get_days_in_years_in_range(start, end);
+///
+/// assert_eq!(days_in_years, vec![365, 366, 365]);
+/// ```
+pub fn get_days_in_years_in_range(start: Date, end: Date) -> Vec<u16> {
+    get_years_in_range(start, end)
+        .iter()
+        .map(|&y| days_in_year(y))
+        .collect()
+}
+
+/// Function to check if a range of years contains a leap year.
+pub fn contains_leap_year(start: Date, end: Date) -> bool {
+    get_years_in_range(start, end)
+        .iter()
+        .any(|&y| is_leap_year(y))
+}
+
+/// Function to get the number of leap years in a range of `Dates`.
+///
+/// ```
+/// use time::{Date, Month};
+/// use calenda_rs::functions::leap_year_count;
+///
+/// let start = Date::from_calendar_date(2023, Month::July, 1).unwrap();
+/// let end = Date::from_calendar_date(2025, Month::January, 1).unwrap();
+///
+/// let number_of_leap_years = leap_year_count(start, end);
+///
+/// assert_eq!(number_of_leap_years, 1);
+pub fn leap_year_count(start: Date, end: Date) -> i64 {
+    get_years_in_range(start, end)
+        .iter()
+        .filter(|&y| is_leap_year(*y))
+        .collect::<Vec<&i32>>()
+        .len() as i64
+}
+
+/// Function to check if date is the last day of February.
+pub fn is_last_day_of_february(date: Date) -> bool {
+    let last_day_of_feb_non_leap =
+        date.month() == Month::February && date.day() == 28 && !is_leap_year(date.year());
+    let last_day_of_feb_leap =
+        date.month() == Month::February && date.day() == 29 && is_leap_year(date.year());
+
+    last_day_of_feb_non_leap || last_day_of_feb_leap
 }
 
 /// Function to get the first day of the month.

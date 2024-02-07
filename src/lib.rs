@@ -28,11 +28,8 @@ pub mod conventions;
 #[allow(unused_parens)]
 pub mod countries;
 
-/// Day counting.
-pub mod daycount;
-
-/// Error types and functions.
-pub mod errors;
+// /// Day counting.
+// pub mod daycount;
 
 /// Functions for working with dates and times.
 pub mod functions;
