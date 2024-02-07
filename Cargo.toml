@@ -12,10 +12,10 @@
 
 [package]
 name = "calenda-rs"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 readme = "README.md"
-repository = "https://github.com/avhz/RustQuant"
+repository = "https://github.com/avhz/calenda-rs"
 description = "A Rust library for global calendars."
 keywords = ["dates", "holidays", "business-days", "calendars"]
 categories = ["date-and-time", "development-tools", "finance", "science"]
