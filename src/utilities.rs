@@ -11,7 +11,7 @@
 
 //! This module defines general calendar and holiday related functions.
 
-use crate::constants::EASTER_MONDAYS;
+use crate::{calendar::Calendar, constants::EASTER_MONDAYS};
 use time::{
     util::{days_in_year, days_in_year_month, is_leap_year},
     Date, Duration, Error, Month, Weekday,
@@ -68,7 +68,7 @@ pub fn get_years_in_range(start: Date, end: Date) -> Vec<i32> {
 ///
 /// ```
 /// use time::{Date, Month};
-/// use calenda_rs::functions::get_days_in_years_in_range;
+/// use calenda_rs::utilities::get_days_in_years_in_range;
 ///
 /// let start = Date::from_calendar_date(2023, Month::July, 1).unwrap();
 /// let end = Date::from_calendar_date(2025, Month::January, 1).unwrap();
@@ -95,7 +95,7 @@ pub fn contains_leap_year(start: Date, end: Date) -> bool {
 ///
 /// ```
 /// use time::{Date, Month};
-/// use calenda_rs::functions::leap_year_count;
+/// use calenda_rs::utilities::leap_year_count;
 ///
 /// let start = Date::from_calendar_date(2023, Month::July, 1).unwrap();
 /// let end = Date::from_calendar_date(2025, Month::January, 1).unwrap();
@@ -119,6 +119,28 @@ pub fn is_last_day_of_february(date: Date) -> bool {
         date.month() == Month::February && date.day() == 29 && is_leap_year(date.year());
 
     last_day_of_feb_non_leap || last_day_of_feb_leap
+}
+
+/// Function to get the next business day for a given date and calendar.
+pub fn next_business_day<C: Calendar>(date: Date, calendar: &C) -> Date {
+    let mut new_date = date;
+
+    while !calendar.is_business_day(new_date) {
+        new_date = new_date.next_day().unwrap();
+    }
+
+    new_date
+}
+
+/// Function to get the previous business day for a given date and calendar.
+pub fn previous_business_day<C: Calendar>(date: Date, calendar: &C) -> Date {
+    let mut new_date = date;
+
+    while !calendar.is_business_day(new_date) {
+        new_date = new_date.previous_day().unwrap();
+    }
+
+    new_date
 }
 
 /// Function to get the first day of the month.

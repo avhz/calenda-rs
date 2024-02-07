@@ -12,7 +12,7 @@
 //! This module defines Australian holidays and calendars.
 
 use crate::calendar::Calendar;
-use crate::functions::unpack_date;
+use crate::utilities::unpack_date;
 use time::{Date, Month, Weekday};
 
 /// Australian national holiday calendar.

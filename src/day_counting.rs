@@ -9,11 +9,15 @@
 //      - LICENSE-MIT.md
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-use time::{Date, Month};
-
-use crate::functions::{
-    contains_leap_year, get_years_in_range, is_last_day_of_february, leap_year_count,
+use crate::{
+    calendar::Calendar,
+    utilities::{contains_leap_year, get_years_in_range, is_last_day_of_february, leap_year_count},
 };
+use time::{Date, Duration, Month};
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// STRUCTS, ENUMS, AND TRAITS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 /// Day count conventions.
 ///
@@ -90,14 +94,231 @@ pub enum DayCountConvention {
     Thirty_U_360,
 }
 
-trait DayCounter {
-    fn day_count(&self, start_date: Date, end_date: Date) -> f64;
-    fn year_fraction(
-        &self,
-        start_date: Date,
-        end_date: Date,
-        convention: DayCountConvention,
-    ) -> f64;
+/// `DayCounter` trait.
+///
+/// This trait is used to compute:
+///     - Day count fraction (fraction of year between two dates).
+///     - Business day count (number of days between two dates, excluding weekends and holidays).
+///     - Calendar day count (number of days between two dates).
+pub trait DayCounter {
+    /// Compute the number of calendar days between two dates.
+    fn calendar_day_count(&self, date1: Date, date2: Date) -> i64;
+
+    /// Compute the number of business days between two dates.
+    fn business_day_count(&self, date1: Date, date2: Date) -> i64;
+
+    /// Compute the day count factor between two dates.
+    fn day_count_factor(&self, date1: Date, date2: Date, convention: &DayCountConvention) -> f64;
+
+    /// Compute the number of calendar days between each date in a vector of dates.
+    fn calendar_day_counts(&self, dates: Vec<Date>) -> Vec<i64>;
+
+    /// Compute the number of business days between two dates.
+    fn business_day_counts(&self, dates: Vec<Date>) -> Vec<i64>;
+
+    /// Compute the day count factor between each date in a vector of dates.
+    fn day_count_factors(&self, dates: Vec<Date>, convention: &DayCountConvention) -> Vec<f64>;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// FUNCTIONS/METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+impl<C> DayCounter for C
+where
+    C: Calendar,
+{
+    /// Compute the number of calendar days between two dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `date1` - The first date.
+    /// * `date2` - The second date.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2025-01-01);
+    ///
+    /// let calendar = AustraliaCalendar;
+    ///
+    /// assert_eq!(calendar.calendar_day_count(date1, date2), 731);
+    /// ```
+    fn calendar_day_count(&self, date1: Date, date2: Date) -> i64 {
+        (date2 - date1).whole_days()
+    }
+
+    /// Compute the number of business days between two dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `date1` - The first date.
+    /// * `date2` - The second date.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2023-02-01);
+    ///
+    /// let calendar = AustraliaCalendar;
+    ///
+    /// assert_eq!(calendar.business_day_count(date1, date2), 21);
+    /// ```
+    fn business_day_count(&self, date1: Date, date2: Date) -> i64 {
+        let mut count = 0;
+        let mut temp_date = date1;
+
+        while temp_date <= date2 {
+            if self.is_business_day(temp_date) {
+                count += 1;
+            }
+            temp_date += Duration::days(1);
+        }
+
+        count
+    }
+
+    /// Computes the day count factor between two dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `date1` - The first date.
+    /// * `date2` - The second date.
+    /// * `convention` - The day count convention.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    /// use calenda_rs::day_counting::DayCountConvention;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2024-01-01);
+    ///
+    /// let calendar = AustraliaCalendar;
+    /// let convention = DayCountConvention::Actual_365_Actual;
+    ///
+    /// assert_eq!(calendar.day_count_factor(date1, date2, &convention), 0.997_267_759_562_841_5);
+    /// ```
+    fn day_count_factor(&self, date1: Date, date2: Date, convention: &DayCountConvention) -> f64 {
+        convention.day_count_factor(date1, date2)
+    }
+
+    /// Compute the number of calendar days between each date in a vector of dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `dates` - A vector of dates.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2024-01-01);
+    /// let date3 = date!(2025-01-01);
+    ///
+    /// let dates = vec![date1, date2, date3];
+    /// let expected = vec![365, 366];
+    ///
+    /// let calendar = AustraliaCalendar;
+    ///
+    /// assert_eq!(calendar.calendar_day_counts(dates), expected);
+    /// ```
+    fn calendar_day_counts(&self, dates: Vec<Date>) -> Vec<i64> {
+        let mut counts = Vec::with_capacity(dates.len());
+
+        for i in 0..dates.len() - 1 {
+            counts.push(self.calendar_day_count(dates[i], dates[i + 1]));
+        }
+
+        counts
+    }
+
+    /// Compute the number of calendar days between each date in a vector of dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `dates` - A vector of dates.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2023-02-01);
+    /// let date3 = date!(2023-03-01);
+    ///
+    /// let dates = vec![date1, date2, date3];
+    /// let expected = vec![21, 21];
+    ///
+    /// let calendar = AustraliaCalendar;
+    ///
+    /// assert_eq!(calendar.business_day_counts(dates), expected);
+    /// ```
+    fn business_day_counts(&self, dates: Vec<Date>) -> Vec<i64> {
+        let mut counts = Vec::with_capacity(dates.len());
+
+        for i in 0..dates.len() - 1 {
+            counts.push(self.business_day_count(dates[i], dates[i + 1]));
+        }
+
+        counts
+    }
+
+    /// Compute the day count factors between each date in a vector of dates.
+    ///
+    /// # Arguments
+    ///
+    /// * `dates` - A vector of dates.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use time::macros::date;
+    /// use calenda_rs::day_counting::DayCounter;
+    /// use calenda_rs::countries::oceania::australia::AustraliaCalendar;
+    /// use calenda_rs::day_counting::DayCountConvention;
+    ///
+    /// let date1 = date!(2023-01-01);
+    /// let date2 = date!(2024-01-01);
+    /// let date3 = date!(2025-01-01);
+    ///
+    /// let dates = vec![date1, date2, date3];
+    /// let expected = vec![0.997_267_759_562_841_5, 1.0];
+    ///
+    /// let calendar = AustraliaCalendar;
+    /// let convention = DayCountConvention::Actual_365_Actual;
+    ///
+    /// assert_eq!(calendar.day_count_factors(dates, &convention), expected);
+    /// ```
+    fn day_count_factors(&self, dates: Vec<Date>, convention: &DayCountConvention) -> Vec<f64> {
+        let mut factors = Vec::with_capacity(dates.len());
+
+        for i in 0..dates.len() - 1 {
+            factors.push(self.day_count_factor(dates[i], dates[i + 1], &convention));
+        }
+
+        factors
+    }
 }
 
 impl DayCountConvention {
@@ -105,24 +326,24 @@ impl DayCountConvention {
     #[rustfmt::skip]
     pub fn day_count_factor(&self, start_date: Date, end_date: Date) -> f64 {
         match self {
-            Self::One_One => Self::day_count_factor_one_one(start_date, end_date),
-            Self::Actual_360 => Self::day_count_factor_actual_360(start_date, end_date),
-            Self::Actual_364 => Self::day_count_factor_actual_364(start_date, end_date),
-            Self::Actual_365_25 => Self::day_count_factor_actual_365_25(start_date, end_date),
-            Self::Actual_365_Actual => Self::day_count_factor_actual_365_actual(start_date, end_date),
-            Self::Actual_365_Fixed => Self::day_count_factor_actual_365_fixed(start_date, end_date),
-            Self::Actual_365_Leap => Self::day_count_factor_actual_365_leap(start_date, end_date),
-            Self::Actual_Actual_AFB => Self::day_count_factor_actual_actual_afb(start_date, end_date),
-            Self::Actual_Actual_ICMA => Self::day_count_factor_actual_actual_icma(start_date, end_date),
-            Self::Actual_Actual_ISDA => Self::day_count_factor_actual_actual_isda(start_date, end_date),
-            Self::NL_360 => Self::day_count_factor_nl_360(start_date, end_date),
-            Self::NL_365 => Self::day_count_factor_nl_365(start_date, end_date),
-            Self::Thirty_360_ISDA => Self::day_count_factor_thirty_360_isda(start_date, end_date),
-            Self::Thirty_E_360 => Self::day_count_factor_thirty_e_360(start_date, end_date),
-            Self::Thirty_E_360_ISDA => Self::day_count_factor_thirty_e_360_isda(start_date, end_date),
-            Self::Thirty_E_365 => Self::day_count_factor_thirty_e_365(start_date, end_date),
-            Self::Thirty_E_Plus_360 => Self::day_count_factor_thirty_e_plus_360(start_date, end_date),
-            Self::Thirty_U_360 => Self::day_count_factor_thirty_u_360(start_date, end_date),
+            Self::One_One               => Self::day_count_factor_one_one(start_date, end_date),
+            Self::Actual_360            => Self::day_count_factor_actual_360(start_date, end_date),
+            Self::Actual_364            => Self::day_count_factor_actual_364(start_date, end_date),
+            Self::Actual_365_25         => Self::day_count_factor_actual_365_25(start_date, end_date),
+            Self::Actual_365_Actual     => Self::day_count_factor_actual_365_actual(start_date, end_date),
+            Self::Actual_365_Fixed      => Self::day_count_factor_actual_365_fixed(start_date, end_date),
+            Self::Actual_365_Leap       => Self::day_count_factor_actual_365_leap(start_date, end_date),
+            Self::Actual_Actual_AFB     => Self::day_count_factor_actual_actual_afb(start_date, end_date),
+            Self::Actual_Actual_ICMA    => Self::day_count_factor_actual_actual_icma(start_date, end_date),
+            Self::Actual_Actual_ISDA    => Self::day_count_factor_actual_actual_isda(start_date, end_date),
+            Self::NL_360                => Self::day_count_factor_nl_360(start_date, end_date),
+            Self::NL_365                => Self::day_count_factor_nl_365(start_date, end_date),
+            Self::Thirty_360_ISDA       => Self::day_count_factor_thirty_360_isda(start_date, end_date),
+            Self::Thirty_E_360          => Self::day_count_factor_thirty_e_360(start_date, end_date),
+            Self::Thirty_E_360_ISDA     => Self::day_count_factor_thirty_e_360_isda(start_date, end_date),
+            Self::Thirty_E_365          => Self::day_count_factor_thirty_e_365(start_date, end_date),
+            Self::Thirty_E_Plus_360     => Self::day_count_factor_thirty_e_plus_360(start_date, end_date),
+            Self::Thirty_U_360          => Self::day_count_factor_thirty_u_360(start_date, end_date),
         }
     }
 
@@ -341,28 +562,3 @@ impl DayCountConvention {
         (date.year(), date.month() as i32, date.day() as i32)
     }
 }
-
-// impl<C: Calendar> DayCounter for C {
-//     fn day_count(&self, start_date: Date, end_date: Date) -> f64 {
-//         todo!()
-//     }
-
-//     fn year_fraction(
-//         &self,
-//         start_date: Date,
-//         end_date: Date,
-//         convention: DayCountConvention,
-//     ) -> f64 {
-//         let total_days = (end_date - start_date).whole_days() as f64;
-//         let business_days = self.all_business_days_between(start_date, end_date).len() as f64;
-
-//         match convention {
-//             DayCountConvention::OneOne => 1.0,
-//             DayCountConvention::Actual360 => total_days / 360.0,
-//             DayCountConvention::Actual365 => total_days / 365.0,
-//             DayCountConvention::Actual364 => total_days / 364.0,
-//             DayCountConvention::ActualActualISDA => 0.0,
-//             _ => 0.0,
-//         }
-//     }
-// }

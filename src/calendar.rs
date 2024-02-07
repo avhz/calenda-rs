@@ -11,7 +11,7 @@
 
 //! This module defines a `Calendar` type and its methods.
 
-use crate::functions::is_weekend;
+use crate::utilities::is_weekend;
 use time::Date;
 
 /// Calendar trait.

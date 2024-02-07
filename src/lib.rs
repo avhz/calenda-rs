@@ -16,23 +16,38 @@
 
 /// The core `Calendar` trait.
 pub mod calendar;
+pub use calendar::*;
 
 /// Constants for calendars and holidays.
 #[allow(dead_code)]
 pub mod constants;
-
-/// Conventions for day counting.
-pub mod conventions;
+pub use constants::*;
 
 /// Calendars implemented for specific countries.
 #[allow(unused_parens)]
 pub mod countries;
+pub use countries::*;
 
-// /// Day counting.
-// pub mod daycount;
+/// Date rolling conventions and methods.
+pub mod date_rolling;
+pub use date_rolling::*;
 
-/// Functions for working with dates and times.
-pub mod functions;
+/// Day counting conventions and methods.
+pub mod day_counting;
+pub use day_counting::*;
+
+/// Frequency of payments.
+pub mod frequency;
+pub use frequency::*;
 
 /// The `Holiday` trait.
 pub mod holiday;
+pub use holiday::*;
+
+/// Utility functions for working with dates and times.
+pub mod utilities;
+pub use utilities::*;
+
+/// The `Schedule` type.
+pub mod schedule;
+pub use schedule::*;

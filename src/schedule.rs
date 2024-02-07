@@ -8,12 +8,3 @@
 //      - LICENSE-APACHE.md
 //      - LICENSE-MIT.md
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-/// Date rolling conventions.
-pub mod date_rolling_conventions;
-
-/// Day counting conventions.
-pub mod day_counting_conventions;
-
-/// Frequency conventions.
-pub mod frequency;
