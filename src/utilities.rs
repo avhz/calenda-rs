@@ -143,6 +143,19 @@ pub fn previous_business_day<C: Calendar>(date: Date, calendar: &C) -> Date {
     new_date
 }
 
+/// Function to generate a sequence of dates from a start date, end date.
+pub fn date_sequence(start: Date, end: Date) -> Vec<Date> {
+    let mut dates = Vec::with_capacity((end - start).whole_days() as usize);
+    let mut current_date = start;
+
+    while current_date <= end {
+        dates.push(current_date);
+        current_date = current_date + Duration::days(1);
+    }
+
+    dates
+}
+
 /// Function to get the first day of the month.
 pub fn get_first_day_of_month(year: i32, month: Month) -> Result<Weekday, Error> {
     Ok(Date::from_calendar_date(year, month, 1)?.weekday())

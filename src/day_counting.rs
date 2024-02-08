@@ -13,6 +13,7 @@ use crate::{
     calendar::Calendar,
     utilities::{contains_leap_year, get_years_in_range, is_last_day_of_february, leap_year_count},
 };
+use std::fmt::{self};
 use time::{Date, Duration, Month};
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,13 +112,39 @@ pub trait DayCounter {
     fn day_count_factor(&self, date1: Date, date2: Date, convention: &DayCountConvention) -> f64;
 
     /// Compute the number of calendar days between each date in a vector of dates.
-    fn calendar_day_counts(&self, dates: Vec<Date>) -> Vec<i64>;
+    fn calendar_day_counts(&self, dates: &[Date]) -> Vec<i64>;
 
     /// Compute the number of business days between two dates.
-    fn business_day_counts(&self, dates: Vec<Date>) -> Vec<i64>;
+    fn business_day_counts(&self, dates: &[Date]) -> Vec<i64>;
 
     /// Compute the day count factor between each date in a vector of dates.
-    fn day_count_factors(&self, dates: Vec<Date>, convention: &DayCountConvention) -> Vec<f64>;
+    fn day_count_factors(&self, dates: &[Date], convention: &DayCountConvention) -> Vec<f64>;
+}
+
+impl fmt::Display for DayCountConvention {
+    #[rustfmt::skip]
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::One_One               => write!(f, "1 / 1"),
+            Self::Actual_360            => write!(f, "Actual / 360"),
+            Self::Actual_364            => write!(f, "Actual / 364"),
+            Self::Actual_365_25         => write!(f, "Actual / 365.25"),
+            Self::Actual_365_Actual     => write!(f, "Actual / 365 Actual"),
+            Self::Actual_365_Fixed      => write!(f, "Actual / 365F"),
+            Self::Actual_365_Leap       => write!(f, "Actual / 365L"),
+            Self::Actual_Actual_AFB     => write!(f, "Actual / Actual AFB"),
+            Self::Actual_Actual_ICMA    => write!(f, "Actual / Actual ICMA"),
+            Self::Actual_Actual_ISDA    => write!(f, "Actual / Actual ISDA"),
+            Self::NL_360                => write!(f, "No Leap / 360"),
+            Self::NL_365                => write!(f, "No Leap / 365"),
+            Self::Thirty_360_ISDA       => write!(f, "30 / 360 ISDA"),
+            Self::Thirty_E_360          => write!(f, "30 E / 360"),
+            Self::Thirty_E_360_ISDA     => write!(f, "30 E / 360 ISDA"),
+            Self::Thirty_E_365          => write!(f, "30 E / 365"),
+            Self::Thirty_E_Plus_360     => write!(f, "30 E+ / 360"),
+            Self::Thirty_U_360          => write!(f, "30 U / 360"),
+        }
+    }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -233,21 +260,18 @@ where
     /// let date2 = date!(2024-01-01);
     /// let date3 = date!(2025-01-01);
     ///
-    /// let dates = vec![date1, date2, date3];
+    /// let dates = &[date1, date2, date3];
     /// let expected = vec![365, 366];
     ///
     /// let calendar = AustraliaCalendar;
     ///
     /// assert_eq!(calendar.calendar_day_counts(dates), expected);
     /// ```
-    fn calendar_day_counts(&self, dates: Vec<Date>) -> Vec<i64> {
-        let mut counts = Vec::with_capacity(dates.len());
-
-        for i in 0..dates.len() - 1 {
-            counts.push(self.calendar_day_count(dates[i], dates[i + 1]));
-        }
-
-        counts
+    fn calendar_day_counts(&self, dates: &[Date]) -> Vec<i64> {
+        dates
+            .windows(2)
+            .map(|window| self.calendar_day_count(window[0], window[1]))
+            .collect()
     }
 
     /// Compute the number of calendar days between each date in a vector of dates.
@@ -267,21 +291,18 @@ where
     /// let date2 = date!(2023-02-01);
     /// let date3 = date!(2023-03-01);
     ///
-    /// let dates = vec![date1, date2, date3];
+    /// let dates = &[date1, date2, date3];
     /// let expected = vec![21, 21];
     ///
     /// let calendar = AustraliaCalendar;
     ///
     /// assert_eq!(calendar.business_day_counts(dates), expected);
     /// ```
-    fn business_day_counts(&self, dates: Vec<Date>) -> Vec<i64> {
-        let mut counts = Vec::with_capacity(dates.len());
-
-        for i in 0..dates.len() - 1 {
-            counts.push(self.business_day_count(dates[i], dates[i + 1]));
-        }
-
-        counts
+    fn business_day_counts(&self, dates: &[Date]) -> Vec<i64> {
+        dates
+            .windows(2)
+            .map(|window| self.business_day_count(window[0], window[1]))
+            .collect()
     }
 
     /// Compute the day count factors between each date in a vector of dates.
@@ -302,7 +323,7 @@ where
     /// let date2 = date!(2024-01-01);
     /// let date3 = date!(2025-01-01);
     ///
-    /// let dates = vec![date1, date2, date3];
+    /// let dates = &[date1, date2, date3];
     /// let expected = vec![0.997_267_759_562_841_5, 1.0];
     ///
     /// let calendar = AustraliaCalendar;
@@ -310,14 +331,18 @@ where
     ///
     /// assert_eq!(calendar.day_count_factors(dates, &convention), expected);
     /// ```
-    fn day_count_factors(&self, dates: Vec<Date>, convention: &DayCountConvention) -> Vec<f64> {
-        let mut factors = Vec::with_capacity(dates.len());
+    fn day_count_factors(&self, dates: &[Date], convention: &DayCountConvention) -> Vec<f64> {
+        dates
+            .windows(2)
+            .map(|window| self.day_count_factor(window[0], window[1], convention))
+            .collect()
+    }
+}
 
-        for i in 0..dates.len() - 1 {
-            factors.push(self.day_count_factor(dates[i], dates[i + 1], &convention));
-        }
-
-        factors
+impl Default for DayCountConvention {
+    /// Default day count convention. Currently set to `Actual/Actual ISDA`.
+    fn default() -> Self {
+        Self::Actual_Actual_ISDA
     }
 }
 
