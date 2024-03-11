@@ -64,6 +64,16 @@ pub fn get_years_in_range(start: Date, end: Date) -> Vec<i32> {
     (start.year()..=end.year()).collect()
 }
 
+/// Retrieve today's date (local time).
+///
+/// # Warning:
+/// Depending on where the code is physically run, the date may be different.
+/// For example, two machines calling this function at precisely the same time in
+/// Australia and the United States will get different dates.
+pub fn today() -> Date {
+    time::OffsetDateTime::now_utc().date()
+}
+
 /// Function to get the number of days for each year in a range of `Dates`.
 ///
 /// ```
